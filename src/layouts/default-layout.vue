@@ -90,7 +90,7 @@ export default defineComponent({
 </script>
 <style lang="less">
 .ant-layout {
-  overflow: scroll;
+  //overflow: scroll;
   height: 100%;
 
   .ant-layout-content {
@@ -102,6 +102,30 @@ export default defineComponent({
     position: relative;
     left: 35px;
     margin: 10px auto;
+  }
+
+  /* 针对 WebKit 内核浏览器（如 Chrome、Safari）的滚动条样式 */
+  /* 整体滚动条样式 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* 滚动条轨道 */
+  ::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  /* 滚动条滑块 */
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  /* 滚动条滑块悬浮状态 */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
   }
 }
 
