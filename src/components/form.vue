@@ -85,7 +85,7 @@ const propsData = withDefaults(
     isNeedEditor: false
   }
 )
-const actionUrl = import.meta.env.VITE_API_BASE_URL + 'admin/file/uploadImg'
+const actionUrl = window.env.API_BASE_URL + 'admin/file/uploadImg'
 const emit = defineEmits(['newFormDataChange'])
 
 const { formData } = toRefs(propsData)
@@ -94,7 +94,7 @@ const newFormData = ref(formData)
 
 const handleChange = (info: UploadChangeParam, key: string) => {
   newFormData.value[key] =
-    import.meta.env.VITE_API_BASE_UPLOAD_IMG_URL + info.file?.response?.data?.filename
+    window.env.API_BASE_UPLOAD_IMG_URL + info.file?.response?.data?.filename
 }
 watch(
   newFormData,

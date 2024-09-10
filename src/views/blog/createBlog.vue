@@ -74,7 +74,7 @@ import type { UploadChangeParam } from 'ant-design-vue'
 const router = useRouter()
 const route = useRoute()
 const cateList = ref([])
-const actionUrl = import.meta.env.VITE_API_BASE_URL + 'admin/file/uploadImg'
+const actionUrl = window.env.API_BASE_URL + 'admin/file/uploadImg'
 const formState = ref({
   title: '',
   intro: '',

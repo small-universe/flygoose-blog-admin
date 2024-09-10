@@ -5,7 +5,7 @@ import router from '@/router'
 import { message } from 'ant-design-vue'
 
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: window.env.API_BASE_URL,
   timeout: 30 * 1000,
   // 请求是否携带cookie
   withCredentials: true
