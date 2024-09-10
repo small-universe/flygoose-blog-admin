@@ -14,9 +14,12 @@ COPY ./docker/env.update.sh .
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./docker/.env .
 EXPOSE 80
+
+# 执行脚本时出现 env.update.sh: line 47: syntax error: bad substitution 需要安装和使用bash来执行
 RUN sed -i 's/\r$//' ./env.update.sh \
     && chmod +x ./env.update.sh \
+    && apk add --no-cache bash
 
-ENTRYPOINT ["env.update.sh"]
+ENTRYPOINT ["./env.update.sh"]
 # 启动 nginx 服务器
 CMD ["nginx", "-g", "daemon off;"]

@@ -45,7 +45,6 @@ do
     fi
 done < ${absolute_path}/.env
 echo "}" >> ${env_config}
-sed -e "s/\//\\\/g" ${env_config}
 cat ${env_config}
 
 exec "$@"
