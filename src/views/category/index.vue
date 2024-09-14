@@ -6,7 +6,7 @@
           <a-select v-model:value="state.status" :options="state.statusOptions"></a-select>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary" @click="getCategoryList">查询</a-button>
+          <a-button type="primary" @click="handleSearch">查询</a-button>
         </a-form-item>
       </a-form>
       <a-button class="create" type="primary" @click="createSite">创建分类</a-button>
@@ -17,6 +17,8 @@
       :columns="columns"
       ref="table"
       @edit="edit"
+      :pagination="pagination"
+      @change="handleTableChange"
       style="margin-top: 10px"
     >
       <template #[item]="data" v-for="item in Object.keys($slots)">
@@ -35,11 +37,12 @@
 import Table from '@/components/table.vue'
 import Form from '@/components/form.vue'
 import Modal from '@/components/modal.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import type { IFormCinfig } from '@/components/types/form'
 import { useCategoryWithOut } from '@/stores/module/category'
-import { message } from 'ant-design-vue'
+import { message, type TableProps } from 'ant-design-vue'
 import { NORMALSTATUSENUM } from '@/utils/constant'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
 const useCategory = useCategoryWithOut()
 
@@ -142,7 +145,7 @@ const formConfig = ref<IFormCinfig[]>([
 ])
 
 onMounted(() => {
-  getCategoryList()
+  getList()
 })
 
 const state = reactive({
@@ -151,14 +154,57 @@ const state = reactive({
     { value: -1, label: '全部' },
     { value: 0, label: '已下架' },
     { value: 1, label: '已上架' }
-  ]
+  ],
+  pageNum: 1,
+  pageSize: 10,
+  count: 0
 })
 
-const getCategoryList = async () => {
+const getList = async () => {
   const res = await useCategory.getCategoryListAction({
-    status: state.status
+    status: state.status,
+    pageNum: state.pageNum,
+    pageSize: state.pageSize
   })
   dataSource.value = res.list
+  state.count = res.count
+}
+
+/**
+ * 分页配置
+ */
+const pagination = computed(() => ({
+  current: state.pageNum,
+  pageSize: state.pageSize,
+  total: state.count,
+  position: ['bottomCenter'],
+  showSizeChanger: true,
+  pageSizeOptions:['5','10', '50', '100','200'] ,//下拉选择每页显示多少条
+  locale: zhCN.Pagination //国际化 中文
+}))
+
+/**
+ * 表格的分页查询
+ * @param pag     分页参数
+ * @param filters 过滤字段
+ * @param sorter  排序字段
+ */
+const handleTableChange: TableProps['onChange'] = (
+  pag: { pageSize: number; current: number },
+  filters: any,
+  sorter: any
+) => {
+  state.pageNum = pag.current
+  state.pageSize = pag.pageSize
+  getList()
+}
+
+/**
+ * 搜索
+ */
+const handleSearch = () => {
+  state.pageNum = 1
+  getList()
 }
 
 const newFormDataChange = (val: any) => {
@@ -190,7 +236,7 @@ const confirm = async (cb: any) => {
     }
     resetForm()
     cb()
-    getCategoryList()
+    getList()
   } catch (error) {
     console.log(error)
   }

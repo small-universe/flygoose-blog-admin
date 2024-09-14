@@ -1,11 +1,11 @@
 import request from '@/utils/http'
 
 /**
- * @description 获取分类列表
+ * @description 获取分类列表（分页）
  */
 export const getCategoryList = (data: any): Promise<any> => {
   return request<{ token: string }>({
-    url: '/admin/category/getCategoryList',
+    url: '/admin/category/pageQueryByStatus',
     method: 'POST',
     data
   })

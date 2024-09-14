@@ -7,7 +7,7 @@
         </a-form-item>
 
         <a-form-item>
-          <a-button type="primary" @click="getList">查询</a-button>
+          <a-button type="primary" @click="handleSearch">查询</a-button>
         </a-form-item>
       </a-form>
       <a-button class="create" type="primary" @click="createSite">创建</a-button>
@@ -17,20 +17,14 @@
       :columns="columns"
       ref="table"
       @edit="edit"
+      :pagination="pagination"
+      @change="handleTableChange"
       style="margin-top: 10px"
     >
       <template #[item]="data" v-for="item in Object.keys($slots)">
         <slot :name="item" v-bind="data || {}"></slot>
       </template>
     </Table>
-
-    <a-pagination
-      @change="getList"
-      v-model:current="state.pageNum"
-      :total="state.count"
-      show-less-items
-      style="margin-top: 10px"
-    />
 
     <Modal :title="title" v-model:visible="visible" @confirm="confirm" @cancel="cancel">
       <Form :formData="formData" :formConfig="formConfig" @newFormDataChange="newFormDataChange">
@@ -45,9 +39,10 @@ import Form from '@/components/form.vue'
 import Modal from '@/components/modal.vue'
 import { onMounted, reactive, ref, computed } from 'vue'
 import type { IFormCinfig } from '@/components/types/form'
-import { message } from 'ant-design-vue'
+import { message, type TableProps } from 'ant-design-vue'
 import * as api from '@/apis/notice'
 import { NORMALSTATUS, NORMALSTATUSENUM } from '@/utils/constant'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
 const dataSource = ref<Record<string, string>[]>([])
 
@@ -143,6 +138,7 @@ const state = reactive({
   count: 0,
   word: '',
   pageNum: 1,
+  pageSize: 5,
   statusOptions: NORMALSTATUS
 })
 
@@ -150,10 +146,48 @@ const getList = async () => {
   const res = await api.getNoticeList({
     status: state.status,
     pageNum: state.pageNum,
-    pageSize: 10
+    pageSize: state.pageSize
   })
   dataSource.value = res.data.list
   state.count = res.data.count
+}
+
+
+/**
+ * 分页配置
+ */
+const pagination = computed(() => ({
+  current: state.pageNum,
+  pageSize: state.pageSize,
+  total: state.count,
+  position: ['bottomCenter'],
+  showSizeChanger: true,
+  pageSizeOptions:['5','10', '50', '100','200'] ,//下拉选择每页显示多少条
+  locale: zhCN.Pagination //国际化 中文
+}))
+
+/**
+ * 表格的分页查询
+ * @param pag     分页参数
+ * @param filters 过滤字段
+ * @param sorter  排序字段
+ */
+const handleTableChange: TableProps['onChange'] = (
+  pag: { pageSize: number; current: number },
+  filters: any,
+  sorter: any
+) => {
+  state.pageNum = pag.current
+  state.pageSize = pag.pageSize
+  getList()
+}
+
+/**
+ * 搜索
+ */
+const handleSearch = () => {
+  state.pageNum = 1
+  getList()
 }
 
 const newFormDataChange = (val: any) => {
