@@ -113,19 +113,19 @@ export default defineComponent({
 
   /* 滚动条轨道 */
   ::-webkit-scrollbar-track {
-    background-color: #f5f5f5;
+    //background-color: #c81b1b;
     border-radius: 4px;
   }
 
   /* 滚动条滑块 */
   ::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 4px;
+    //background-color: #888;
+    //border-radius: 4px;
   }
 
   /* 滚动条滑块悬浮状态 */
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
+    //background-color: #555;
   }
 }
 
