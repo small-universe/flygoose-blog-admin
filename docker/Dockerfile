@@ -1,15 +1,19 @@
 # 打包出前端产物，此步骤可以在本地处理
-#FROM node:18.19-alpine3.18 as builder
-#COPY . /flygoose-blog-admi
-#WORKDIR /flygoose-blog-admi
-#RUN npm install -g pnpm --registry=https://registry.npmmirror.com \
-#    && pnpm install --no-frozen-lockfile --registry=https://registry.npmmirror.com \
-#    && pnpm run build
+FROM node:19.9.0-alpine3.17 as builder
+# 设置 npm registry 环境变量
+ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com/
+# 取消 ssl 验证 解决报错：npm ERR! code UNABLE_TO_VERIFY_LEAF_SIGNATURE
+ENV NPM_CONFIG_STRICT_SSL=false
+COPY . /admin
+WORKDIR /admin
+RUN npm install -g pnpm  \
+    && pnpm install --no-frozen-lockfile \
+    && pnpm run build
 
 # 使用nginx构建后台镜像
 FROM nginx:alpine as runner
 WORKDIR /usr/share/nginx/html
-COPY ./dist .
+COPY --from=builder /admin/dist .
 COPY ./docker/env.update.sh .
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./docker/.env .

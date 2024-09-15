@@ -4,6 +4,9 @@ services:
   admin:
     container_name: flygoose-blog-admin
     image: flygoose-blog-admin:v1
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
     ports:
       - "5173:80"
     volumes:
