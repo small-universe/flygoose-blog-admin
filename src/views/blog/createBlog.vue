@@ -99,7 +99,7 @@ onMounted(() => {
 
 const handleChange = ({ file }: UploadChangeParam) => {
   formState.value.thumbnail =
-    import.meta.env.VITE_API_BASE_UPLOAD_IMG_URL + file.response?.data?.filename
+    window.env.API_BASE_UPLOAD_IMG_URL + file.response?.data?.filename
 }
 
 const submit = async () => {

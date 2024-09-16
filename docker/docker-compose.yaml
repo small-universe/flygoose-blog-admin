@@ -3,7 +3,9 @@ version: "3.9"
 services:
   admin:
     container_name: flygoose-blog-admin
-    image: flygoose-blog-admin:v1
+    image: ${IMAGE_NAME}:${VERSION}
+    env_file:
+      - ./.env
     build:
       context: ../
       dockerfile: ./docker/Dockerfile
@@ -11,8 +13,6 @@ services:
       - "5173:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    env_file:
-      - ./.env
     restart: on-failure
     networks:
       - flygoose
